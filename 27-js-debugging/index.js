@@ -19,7 +19,7 @@ function getMonsters(pageNum) {
 function createMonsterCard(monster){
     let container = document.createElement('div'),
         name = document.createElement('h2'),
-        age = document.createElement('img'),
+        age = document.createElement('span'),
         description = document.createElement('p');
 
     name.innerHTML = `${monster.name}`;
@@ -65,8 +65,13 @@ const addSubmitEventListener = function(){
     document.querySelector('#monster-form').addEventListener('submit', function(event){ 
         event.preventDefault();
         console.log('submitted',getFormData());
-        postNewMonster(getFormData());
-        clearForm()
+        // if (validateName(getFormData())){
+        if (getFormData().name === ""){
+            alert("A name must be given")
+        } else {    
+            postNewMonster(getFormData());
+            clearForm()
+        }
     })
 }
 
@@ -77,13 +82,23 @@ const getFormData = function(){
 
         return{
             name: name.value,
-            age: age.value, 
+            age: parseFloat(age.value), 
             description: description.value
         }
 }
 
+// function validateName(formData){
+//     if(formData.name.value ==== ""){
+//         alert("Name must be filled out");
+//         return false;
+//     }
+//     else {
+//         return true;
+//     }
+// }
+
 function postNewMonster(monsterObj){
-    let url = URL_PREFIX + `/monsters`,
+    let url = URL_PREFIX + `monsters`,
         requestOptions = {
             method: 'POST',
             headers:{
@@ -94,7 +109,8 @@ function postNewMonster(monsterObj){
 
     fetch(url, requestOptions)
         .then(function(response){  return response.json()})
-        .then(function(data){ console.log('new monster', data) }) 
+        .then(function(data){ console.log('new monster', data) })
+     
 }
 
 const clearForm = function(){ document.querySelector('#monster-form').reset() }
@@ -113,7 +129,7 @@ const setPageNum = (page) => {
 }
 const pageUp = function(){ page++; getMonsters(page); setPageNum(page) }
 const pageDown = function(){
-        page--; 
+        page === 1 ? page = 1 : page--; 
         getMonsters(page);
         setPageNum(page)
 }
